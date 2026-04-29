@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>النموذج (5) المطور - أ/ عبدالعزيز الفيفي</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
         :root { 
             --primary: #212121; --secondary: #b19410; --accent: #ffc107; 
@@ -11,7 +13,6 @@
             --feedback-bg: #fffde7;
         }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; color: #333; overflow-x: hidden; }
-        #safety-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: gold; z-index: 1000000; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-size: 2rem; }
         .quiz-card { background: var(--white); width: 100%; max-width: 1000px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); border-top: 15px solid var(--secondary); padding: 35px; position: relative; }
         .header { text-align: center; border-bottom: 3px double var(--secondary); margin-bottom: 25px; padding-bottom: 20px; }
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fafafa; padding: 15px; border-radius: 12px; border: 1px solid #ddd; }
@@ -19,10 +20,10 @@
         .timer-circle { font-weight: 900; font-size: 1.4rem; color: var(--primary); width: 65px; height: 65px; border: 4px solid var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .timer-critical { color: white; background: var(--wrong); border-color: #000; animation: shake 0.5s infinite; }
         @keyframes shake { 0% { transform: rotate(0); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } 100% { transform: rotate(0); } }
-        .passage-box { background: #fffde7; padding: 25px; border-radius: 15px; border-right: 10px solid var(--secondary); margin-bottom: 25px; line-height: 2; font-size: 1.2rem; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); }
+        .passage-box { background: #fffde7; padding: 25px; border-radius: 15px; border-right: 10px solid var(--secondary); margin-bottom: 25px; line-height: 2; font-size: 1.2rem; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
         .opt-btn { padding: 22px; border: 2px solid #eee; border-radius: 15px; cursor: pointer; transition: 0.3s; font-weight: 600; background: #fff; text-align: center; font-size: 1.1rem; }
-        .opt-btn:hover { border-color: var(--secondary); background: #fffcf0; transform: translateY(-3px); }
+        .opt-btn:hover { border-color: var(--secondary); background: #fffcf0; }
         .correct { background: var(--correct) !important; color: white; border-color: var(--correct) !important; }
         .wrong { background: var(--wrong) !important; color: white; border-color: var(--wrong) !important; }
         .feedback-panel { margin-top: 20px; padding: 25px; border-radius: 15px; display: none; background: var(--feedback-bg); border-right: 10px solid var(--correct); }
@@ -35,11 +36,6 @@
     </style>
 </head>
 <body oncontextmenu="return false;">
-
-<div id="safety-overlay">
-    <h1>⚠️ نظام حماية المحتوى</h1>
-    <p>حقوق هذا العمل محفوظة للأستاذ: عبدالعزيز الفيفي.</p>
-</div>
 
 <div class="quiz-card" id="quiz-container">
     <div class="header">
@@ -82,11 +78,9 @@
     </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-    const firebaseConfig = {
+<script>
+    // إعداد Firebase بالنظام المتوافق
+    var firebaseConfig = {
         apiKey: "AIzaSyBkCO7FDQXd89YDf843J4_AtvEFvzzt-R0",
         authDomain: "aztlg-494c3.firebaseapp.com",
         projectId: "aztlg-494c3",
@@ -95,22 +89,9 @@
         appId: "1:597051893949:web:de5554ac900317a92b2fd4",
         measurementId: "G-YKJ1PTP9TH"
     };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // تجهيز الدوال للعمل مع الكود العادي
-    window.saveToFirebase = async (data) => {
-        try {
-            await addDoc(collection(db, "student_results"), {
-                ...data,
-                timestamp: serverTimestamp()
-            });
-        } catch (e) { console.error("Firebase Error:", e); }
-    };
-</script>
-
-<script>
     const rawData = [
         { q: "ريش : طائر", opts: ["شعر : ثدييات", "جلد : إنسان", "وبر : إبل", "صوف : غنم"], ans: "شعر : ثدييات", tip: "العلاقة (غطاء الجسم للكائن)؛ الريش يغطي الطائر، والشعر يغطي الثدييات كفئة عامة.", cat: "تناظر" },
         { q: "ماء : حياة", opts: ["نوم : راحة", "أكل : شبع", "هواء : تنفس", "نار : حرق"], ans: "نوم : راحة", tip: "العلاقة (احتياج ونتيجة)؛ الماء ضروري للحياة، والنوم ضروري للراحة والاستقرار.", cat: "تناظر" },
@@ -153,8 +134,9 @@
         { q: "الارتباط: 'فصل : مدرسة' مثل 'غرفة : ........'", opts: ["فندق", "شارع", "حديقة", "مطعم"], ans: "فندق", tip: "علاقة جزء من كل؛ الغرفة جزء من الفندق.", cat: "ارتباط" }
     ];
 
-    let currentQ = 0, scoreCount = 0, timerObj, mixedData = [], sName = "", logsList = [];
-    function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+    var currentQ = 0, scoreCount = 0, timerObj, mixedData = [], sName = "", logsList = [];
+    
+    function shuffle(arr) { return arr.sort(function() { return Math.random() - 0.5; }); }
 
     function startQuiz() {
         sName = document.getElementById('userNameInput').value;
@@ -168,23 +150,23 @@
 
     function loadQuestion() {
         if(currentQ >= mixedData.length) return endQuiz();
-        const item = mixedData[currentQ];
-        document.getElementById('display-q-idx').innerText = `السؤال ${currentQ + 1} / ${mixedData.length}`;
+        var item = mixedData[currentQ];
+        document.getElementById('display-q-idx').innerText = "السؤال " + (currentQ + 1) + " / " + mixedData.length;
         document.getElementById('display-question').innerText = item.q;
         document.getElementById('feedback-panel').style.display = 'none';
         document.getElementById('next-btn').classList.add('hidden');
         
-        const txtBox = document.getElementById('display-text');
+        var txtBox = document.getElementById('display-text');
         if(item.text) { txtBox.innerText = item.text; txtBox.classList.remove('hidden'); }
         else { txtBox.classList.add('hidden'); }
 
-        const optBox = document.getElementById('display-options');
+        var optBox = document.getElementById('display-options');
         optBox.innerHTML = '';
-        shuffle([...item.opts]).forEach(o => {
-            const b = document.createElement('div');
+        shuffle([...item.opts]).forEach(function(o) {
+            var b = document.createElement('div');
             b.className = 'opt-btn';
             b.innerText = o;
-            b.onclick = () => checkResult(o, b);
+            b.onclick = function() { checkResult(o, b); };
             optBox.appendChild(b);
         });
         runTimer();
@@ -192,27 +174,27 @@
 
     function checkResult(sel, el) {
         clearInterval(timerObj);
-        const item = mixedData[currentQ];
-        const isOk = (sel === item.ans);
-        document.querySelectorAll('.opt-btn').forEach(b => {
+        var item = mixedData[currentQ];
+        var isOk = (sel === item.ans);
+        document.querySelectorAll('.opt-btn').forEach(function(b) {
             b.onclick = null;
             if(b.innerText === item.ans) b.classList.add('correct');
             else if(b.innerText === sel) b.classList.add('wrong');
         });
         if(isOk) scoreCount++;
         document.getElementById('feedback-panel').style.display = 'block';
-        document.getElementById('fb-title').innerText = isOk ? "رائع! ✅" : "خاطئة ❌";
+        document.getElementById('fb-title').innerText = isOk ? "إجابة صحيحة ✅" : "إجابة خاطئة ❌";
         document.getElementById('fb-desc').innerText = item.tip;
         document.getElementById('next-btn').classList.remove('hidden');
-        logsList.push({ q: item.q, cat: item.cat, state: isOk?'ok':'no', correct: item.ans, tip: item.tip });
+        logsList.push({ q: item.q, state: isOk?'ok':'no', correct: item.ans, tip: item.tip });
     }
 
     function runTimer() {
-        let t = 45;
-        const d = document.getElementById('display-timer');
+        var t = 45;
+        var d = document.getElementById('display-timer');
         d.innerText = t;
         d.classList.remove('timer-critical');
-        timerObj = setInterval(() => {
+        timerObj = setInterval(function() {
             t--; d.innerText = t;
             if(t <= 10) d.classList.add('timer-critical');
             if(t <= 0) { clearInterval(timerObj); checkResult("انتهى الوقت", null); }
@@ -221,4 +203,21 @@
 
     function handleNext() { currentQ++; loadQuestion(); }
 
-    function 
+    function endQuiz() {
+        // إرسال البيانات للسحابة
+        db.collection("student_results").add({
+            student_name: sName,
+            score: scoreCount,
+            model: "نموذج 5 المطور",
+            at: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(function(e){ console.log("Cloud Error", e); });
+
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('res-score').innerText = scoreCount + " / " + mixedData.length;
+        
+        var box = document.getElementById('res-logs');
+        box.innerHTML = '';
+        logsList.forEach(function(l, i) {
+            var div = document.createElement('div');
+            div.className = "log-item "
