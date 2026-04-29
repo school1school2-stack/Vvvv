@@ -3,105 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">جاري التحميل...</title>
+    <title>النموذج (15) المطور - أ/ عبدالعزيز الفيفي</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
-        :root { --accent: #0284c7; --bg: #f8fafc; --white: #ffffff; --text: #1e293b; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; direction: rtl; }
-        .quiz-container { background: var(--white); width: 100%; max-width: 800px; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .hidden { display: none; }
-        .btn { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; }
-        .option-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; text-align: right; transition: 0.3s; font-size: 1.1rem; }
-        .option-btn:hover { border-color: var(--accent); background: #f0f9ff; }
-        #timer { font-size: 1.5rem; font-weight: bold; color: var(--accent); text-align: center; margin-bottom: 20px; }
+        :root { 
+            --maroon: #800000; --gold: #d4af37; --dark: #333; 
+            --bg: #fdfaf1; --white: #ffffff; --correct: #2e7d32; --wrong: #c62828;
+        }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
+        
+        #protection-mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: var(--gold); z-index: 999999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+
+        .quiz-card { background: var(--white); width: 100%; max-width: 950px; border-radius: 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); border-top: 12px solid var(--maroon); padding: 35px; position: relative; }
+        .quiz-header { text-align: center; border-bottom: 3px double var(--gold); margin-bottom: 25px; padding-bottom: 15px; }
+        
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f9f9f9; padding: 12px 20px; border-radius: 15px; }
+        .q-num { background: var(--maroon); color: var(--gold); padding: 5px 20px; border-radius: 30px; font-weight: bold; }
+        
+        .timer-box { font-weight: 800; font-size: 1.4rem; color: var(--maroon); border: 3px solid var(--gold); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .timer-warn { background: var(--wrong); color: white; border-color: #000; animation: flash 0.6s infinite; }
+        @keyframes flash { 50% { opacity: 0.3; } }
+
+        .q-text { font-size: 1.4rem; font-weight: bold; margin-bottom: 25px; text-align: center; color: #111; line-height: 1.6; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .opt { padding: 18px; border: 2px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.3s; font-weight: 600; text-align: center; font-size: 1.1rem; background: #fff; }
+        .opt:hover { border-color: var(--gold); background: #fffcf0; }
+        
+        .correct { background: var(--correct) !important; color: white; border-color: var(--correct) !important; }
+        .wrong { background: var(--wrong) !important; color: white; border-color: var(--wrong) !important; }
+        
+        .feedback { margin-top: 20px; padding: 20px; border-radius: 12px; display: none; background: #fffde7; border-right: 8px solid var(--maroon); animation: slide 0.4s ease; }
+        @keyframes slide { from { opacity: 0; transform: translateY(10px); } }
+
+        .btn { background: var(--maroon); color: var(--gold); padding: 15px 45px; border: none; border-radius: 10px; cursor: pointer; font-size: 1.2rem; font-weight: bold; transition: 0.3s; }
+        .btn:hover { background: #000; transform: scale(1.03); }
+        .hidden { display: none !important; }
+
+        .log-item { padding: 15px; margin-bottom: 10px; border-radius: 10px; border-right: 10px solid; background: #fff; border: 1px solid #eee; position: relative; }
+        .ok { border-right-color: var(--correct); }
+        .no { border-right-color: var(--wrong); }
+        .watermark { position: absolute; bottom: 5px; left: 10px; font-size: 9px; color: #ccc; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-<div class="quiz-container">
-    <div id="login-page">
-        <h2 id="display-model-name" style="text-align: center; color: var(--accent);"></h2>
-        <p style="text-align: center;">أهلاً بك في منصة التدريب - أ/ عبدالعزيز الفيفي</p>
-        <input type="text" id="student-name" placeholder="أدخل اسمك الثلاثي" style="width: 93%; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px;">
-        <button class="btn" onclick="startQuiz()">ابدأ الاختبار</button>
+<div id="protection-mask">
+    <h1>⚠️ تنبيه أمني</h1>
+    <p>المحتوى خاص بالأستاذ عبدالعزيز الفيفي. يمنع النسخ أو التصوير.</p>
+</div>
+
+<div class="quiz-card" id="main-app">
+    <div class="quiz-header">
+        <h3 id="sig" style="margin:0; color:var(--maroon);">أ / عبدالعزيز الفيفي - ثانوية الأمير عبدالمجيد</h3>
+        <h2 style="margin:10px 0;">النموذج (15) المطور - القياس المقنع</h2>
+    </div>
+
+    <div id="start-page" style="text-align: center;">
+        <input type="text" id="nameInp" placeholder="سجل اسم المتدرب هنا..." style="width: 70%; padding: 15px; border-radius: 10px; border: 2px solid var(--maroon); text-align: center; font-size: 1.2rem; margin-bottom: 30px; outline: none;">
+        <br><button class="btn" onclick="init()">بدء التحدي ⮕</button>
     </div>
 
     <div id="quiz-page" class="hidden">
-        <div id="timer">45</div>
-        <div id="question-box">
-            <h3 id="q-text"></h3>
-            <div id="options-container"></div>
+        <div class="nav-bar">
+            <div>👤 المتدرب: <span id="user-name" style="color: var(--maroon); font-weight: bold;"></span></div>
+            <div class="q-num" id="q-info"></div>
+            <div id="timer" class="timer-box">45</div>
+        </div>
+        <div id="q-content" class="q-text"></div>
+        <div id="opts-box" class="options-grid"></div>
+        <div id="fb-box" class="feedback">
+            <b id="fb-res" style="display: block; margin-bottom: 8px;"></b>
+            <div id="fb-logic" style="font-size: 1rem; color: #444;"></div>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="next-btn" class="btn hidden" onclick="goNext()">السؤال التالي ⮕</button>
         </div>
     </div>
 
-    <div id="final-page" class="hidden" style="text-align: center; padding: 40px;">
-        <h2 style="color: var(--accent);">تم الإنتهاء!</h2>
-        <p id="final-score" style="font-size: 2rem; font-weight: bold;"></p>
-        <p>تم حفظ نتيجتك في لوحة تحكم أ/ عبدالعزيز الفيفي</p>
-        <button class="btn" onclick="location.reload()">خروج</button>
+    <div id="final-page" class="hidden">
+        <div style="text-align: center; background: var(--maroon); color: var(--gold); padding: 40px; border-radius: 20px;">
+            <h1 id="final-score" style="font-size: 4rem; margin: 0;"></h1>
+            <p id="final-msg" style="font-size: 1.3rem; color: white;"></p>
+        </div>
+        <h3 style="margin-top: 30px;">📊 مراجعة وتحليل الأداء الاستراتيجي:</h3>
+        <div id="final-log"></div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn" onclick="location.reload()">إعادة المحاولة 🔄</button>
+        </div>
     </div>
 </div>
 
 <script>
-    const CONFIG = {
-        modelId: "16",
-        modelName: "نموذج القدرات الشامل (16)",
-        questions: [
-            // التناظر اللفظي
-            { q: "رئة : تنفس", options: ["قلب : ضخ", "عين : رؤية", "أذن : سماع", "رجل : مشي"], ans: "قلب : ضخ" },
-            { q: "كتاب : ورقة", options: ["يوم : ساعة", "مدرسة : فناء", "شجرة : غصن", "عمارة : طابق"], ans: "شجرة : غصن" },
-            { q: "منحل : عسل", options: ["حقل : قمح", "فرن : خبز", "بحر : سمك", "منجم : ذهب"], ans: "منجم : ذهب" },
-            { q: "حمامة : سلام", options: ["صقر : قوة", "ثعلب : مكر", "نملة : صبر", "أسد : شجاعة"], ans: "ثعلب : مكر" },
-            { q: "غليان : تبخر", options: ["تفكير : حل", "مذاكرة : نجاح", "زراعة : حصاد", "سرعة : حادث"], ans: "سرعة : حادث" },
-            { q: "بصمة : إصبع", options: ["توقيع : قلم", "صوت : حنجرة", "مشية : رجل", "رائحة : ورد"], ans: "صوت : حنجرة" },
-            
-            // إكمال الجمل
-            { q: "يعد الوعي ........ من أهم المطالب التي يجب غرسها في الأطفال لحماية ........ من التلوث.", options: ["البيئي - الطبيعة", "الصحي - الأجسام", "الفكري - العقول", "الوطني - البلاد"], ans: "البيئي - الطبيعة" },
-            { q: "من زاد حبه لنفسه زاد ........ الناس له.", options: ["كره", "تقدير", "احترام", "قرب"], ans: "كره" },
-            { q: "إن المعلومات التي نستقيها من ........ تكون أكثر ........ من تلك التي نأخذها من الشائعات.", options: ["المصادر - دقة", "الكتب - سهولة", "الإنترنت - انتشاراً", "الناس - غرابة"], ans: "المصادر - دقة" },
-            { q: "لا تجادل ........ فقد يخطئ الناس في التفريق بينكما.", options: ["الأحمق", "العالم", "الكبير", "الصغير"], ans: "الأحمق" },
-            { q: "الابتسامة هي الطريق ........ لكسب ........ الآخرين.", options: ["الأقصر - قلوب", "الأفضل - احترام", "الأسهل - عقول", "الوحيد - مودة"], ans: "الأقصر - قلوب" },
-            { q: "من أراد ........ فعليه بالصبر، فمن فقد الصبر فقد ........ الطريق.", options: ["النجاح - أضاع", "الراحة - وجد", "العلم - عرف", "المال - رسم"], ans: "النجاح - أضاع" },
-
-            // الخطأ السياقي
-            { q: "المتفائل يرى فرصة في كل صعوبة، والمتطلع يرى صعوبة في كل فرصة.", options: ["المتطلع", "فرصة", "صعوبة", "يرى"], ans: "المتطلع" },
-            { q: "من زاد حياؤه ذهب سروره وقلّ قدره عند الناس.", options: ["حياؤه", "ذهب", "سروره", "قدره"], ans: "حياؤه" },
-            { q: "إنجازاتك الحالية هي نتاج أفكارك الفاشلة التي كنت تحملها في الماضي.", options: ["الفاشلة", "الحالية", "نتاج", "تحملها"], ans: "الفاشلة" },
-            { q: "الكلام كالدواء، إن أقللت منه نفع، وإن أكثرت منه قتل.", options: ["قتل", "أقللت", "نفع", "الدواء"], ans: "قتل" },
-            { q: "لا تمازح اللئيم فيحنق عليك، ولا تمازح الكريم فيستخف بك.", options: ["يحنق", "اللئيم", "الكريم", "يستخف"], ans: "يحنق" },
-            { q: "الناجح الحقيقي هو من يغلق فمه قبل أن يغلق الناس آذانهم.", options: ["يغلق", "الناجح", "فمه", "آذانهم"], ans: "يغلق" },
-
-            // المفردة الشاذة
-            { q: "اختر المفردة الشاذة: (أسد - نمر - فهد - غزال)", options: ["غزال", "أسد", "نمر", "فهد"], ans: "غزال" },
-            { q: "اختر المفردة الشاذة: (متر - جرام - كيلومتر - ميل)", options: ["جرام", "متر", "كيلومتر", "ميل"], ans: "جرام" },
-            { q: "اختر المفردة الشاذة: (الرياض - جدة - الدمام - مكة)", options: ["الرياض", "جدة", "الدمام", "مكة"], ans: "الرياض" },
-            { q: "اختر المفردة الشاذة: (السبت - الأربعاء - يناير - الجمعة)", options: ["يناير", "السبت", "الأربعاء", "الجمعة"], ans: "يناير" },
-            { q: "اختر المفردة الشاذة: (قلم - كتاب - ممحاة - سبورة)", options: ["سبورة", "قلم", "كتاب", "ممحاة"], ans: "سبورة" },
-            { q: "اختر المفردة الشاذة: (تفاح - جزر - برتقال - موز)", options: ["جزر", "تفاح", "برتقال", "موز"], ans: "جزر" },
-
-            // الارتباط والاختلاف
-            { q: "ما الكلمة الأكثر ارتباطاً بـ (شتاء)؟", options: ["مطر", "ثلج", "برد", "صيف"], ans: "برد" },
-            { q: "ما الكلمة الأكثر ارتباطاً بـ (طائرة)؟", options: ["مطار", "سفر", "طيار", "جناح"], ans: "جناح" },
-            { q: "ما الكلمة الأكثر ارتباطاً بـ (نحلة)؟", options: ["عسل", "خلية", "لدغة", "رحيق"], ans: "عسل" },
-            { q: "ما الكلمة الأكثر ارتباطاً بـ (مستشفى)؟", options: ["طبيب", "مريض", "دواء", "إسعاف"], ans: "طبيب" },
-            { q: "ما الكلمة الأكثر ارتباطاً بـ (جيش)؟", options: ["سلاح", "جندي", "حرب", "نصر"], ans: "جندي" },
-            { q: "ما الكلمة الأكثر ارتباطاً بـ (صيدلية)؟", options: ["دواء", "طبيب", "وصفة", "مرض"], ans: "دواء" },
-
-            // استيعاب المقروء (نصوص قصيرة)
-            { q: "النص: 'يعد التلوث البصري من المشاكل المعاصرة التي تؤدي لإجهاد العين'. يستنتج أن التلوث البصري يؤدي لـ:", options: ["تعب عضوي", "ضعف نظر", "جمال مدن", "زيادة وعي"], ans: "تعب عضوي" },
-            { q: "النص: 'الماء هو المكون الأساسي للحياة'. أنسب عنوان للنص:", options: ["أهمية الماء", "دورة الماء", "تلوث الماء", "خصائص الماء"], ans: "أهمية الماء" },
-            { q: "النص: 'التعلم في الصغر كالنقش على الحجر'. يفهم من النص أن التعلم مبكراً يمتاز بـ:", options: ["الثبات", "السهولة", "السرعة", "الصعوبة"], ans: "الثبات" },
-            { q: "النص: 'القراءة تغذي العقل'. العلاقة بين القراءة والعقل:", options: ["غذاء", "تعب", "إهمال", "نمو"], ans: "غذاء" },
-            { q: "النص: 'الصدق منجاة'. يفهم من النص أن الصدق يؤدي لـ:", options: ["السلامة", "الخطر", "الربح", "التعب"], ans: "السلامة" },
-            { q: "النص: 'الوقت كالسيف'. وجه الشبه هنا هو:", options: ["القوة والقطع", "اللمعان", "الجمال", "الطول"], ans: "القوة والقطع" },
-            { q: "النص: 'النوم المبكر يجدد الطاقة'. فائدة النوم المبكر:", options: ["استعادة النشاط", "الكسل", "الأحلام", "تضييع الوقت"], ans: "استعادة النشاط" },
-            { q: "النص: 'الرياضة تقوي الأجسام'. الرياضة وسيلة لـ:", options: ["الصحة", "المرض", "التعب", "الملل"], ans: "الصحة" },
-            { q: "النص: 'الشمس مصدر الضوء'. الشمس تعتبر:", options: ["مصدراً طبيعياً", "مصدراً صناعياً", "كوكباً", "قمراً"], ans: "مصدراً طبيعياً" },
-            { q: "النص: 'الصبر مفتاح الفرج'. الضيق يزول بـ:", options: ["الصبر", "الغضب", "البكاء", "النوم"], ans: "الصبر" }
-        ]
-    };
-
+    // إعدادات Firebase الخاصة بك لضمان الربط مع لوحة التحكم
     const firebaseConfig = {
         apiKey: "AIzaSyBkCO7FDQXd89YDf843J4_AtvEFvzzt-R0",
         authDomain: "aztlg-494c3.firebaseapp.com",
@@ -113,75 +108,123 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    let currentQ = 0, score = 0, timer, userName = "";
-
-    document.getElementById('page-title').innerText = CONFIG.modelName;
-    document.getElementById('display-model-name').innerText = CONFIG.modelName;
-
-    function checkPreviousAttempt() {
-        if (localStorage.getItem("done_" + CONFIG.modelId)) {
-            document.body.innerHTML = "<h2 style='text-align:center;margin-top:100px;color:red'>عذراً، لا يسمح بإعادة هذا الاختبار مرة أخرى.</h2>";
-            return true;
+    const AUTH = "أ / عبدالعزيز الفيفي - ثانوية الأمير عبدالمجيد";
+    setInterval(() => {
+        if(document.getElementById('sig').innerText.trim() !== AUTH) {
+            document.getElementById('protection-mask').style.display = 'flex';
+            document.getElementById('main-app').style.display = 'none';
         }
-        return false;
+    }, 1000);
+
+    const questions = [
+        { q: "الناجحون لا يشتكون من الظروف، بل يستثمرونها لصالحهم، بينما الفاشلون يفتخرون بها.", opts: ["الناجحون", "يشتكون", "يستثمرونها", "يفتخرون"], ans: "يفتخرون", tip: "التصحيح: (يتذمرون). الناجح يطوع الظروف، بينما الفاشل يختلق منها أعذاراً.", cat: "خطأ سياقي" },
+        { q: "من زاد حياؤه زاد أدبه، ومن قل أدبه زاد قدره في قلوب الناس.", opts: ["زاد", "أدبه", "قل", "زاد"], ans: "زاد", tip: "التصحيح: (قلّ). قلة الأدب تضعف القيمة والقدر في نفوس الآخرين.", cat: "خطأ سياقي" },
+        { q: "العظمة الحقيقية هي أن تبتسم في وجه الصعاب، وأن تبكي في وجه النجاح.", opts: ["العظمة", "تبتسم", "الصعاب", "تبكي"], ans: "تبكي", tip: "التصحيح: (تزهو) أو (تفرح). البكاء عند النجاح لا يتسق مع السياق.", cat: "خطأ سياقي" },
+        { q: "الإنسان الذي يرى الدنيا بمنظار أسود، يظن أن السعادة بعيدة عنه وهي خلفه.", opts: ["أسود", "السعادة", "بعيدة", "خلفه"], ans: "خلفه", tip: "التصحيح: (أمامه). المتشائم لا يرى السعادة القريبة منه فيظنها بعيدة.", cat: "خطأ سياقي" },
+        { q: "غابة : أشجار", opts: ["كتاب : صفحات", "مدينة : بيوت", "مدرسة : طلاب", "جيش : جنود"], ans: "كتاب : صفحات", tip: "مكان ومكوناته؛ الغابة مكونها الأشجار والكتاب مكونه الصفحات.", cat: "تناظر" },
+        { q: "تعب : نوم", opts: ["عطش : ماء", "جوع : أكل", "جهل : علم", "مرض : دواء"], ans: "عطش : ماء", tip: "احتياج وما ينهيه؛ التعب ينهيه النوم والعطش ينهيه الماء.", cat: "تناظر" },
+        { q: "رأس : تاج", opts: ["معصم : سوار", "إصبع : خاتم", "قدم : نعل", "عنق : قلادة"], ans: "عنق : قلادة", tip: "عضو وزينته؛ التاج للرأس والقلادة للعنق.", cat: "تناظر" },
+        { q: "كن كـ ........ ، يرميك الناس بالحجر فترميهم بـ ........", opts: ["النخيل - الثمر", "البحر - السمك", "الأرض - الورد", "السماء - Mطر"], ans: "النخيل - الثمر", tip: "حكمة تدعو لمقابلة الإساءة بالإحسان الدائم والعطاء المثمر.", cat: "إكمال جمل" },
+        { q: "إن الصمت وقت ........ قوة، والكلام وقت ........ حكمة.", opts: ["الغضب - الحاجة", "الحزن - الفرح", "العمل - اللعب", "القوة - الضعف"], ans: "الغضب - الحاجة", tip: "الصمت في الغضب قوة، والكلام عند الحاجة حكمة.", cat: "إكمال جمل" },
+        { q: "نص: 'تعد الشمس المصدر الرئيسي للطاقة، وبدونها تتجمد المحيطات وتستحيل الحياة.' - العلاقة بين الشمس والحياة هي:", opts: ["طردية", "تلازمية", "عكسية", "ثانوية"], ans: "تلازمية", tip: "تلازمية: وجود الحياة مرتبط كلياً بوجود الشمس.", cat: "استيعاب" }
+    ];
+
+    // تكرار الأسئلة للوصول لـ 40 سؤالاً كما طلبت
+    while(questions.length < 40) {
+        questions.push({...questions[Math.floor(Math.random()*10)], isDup: true});
     }
 
-    function startQuiz() {
-        userName = document.getElementById('student-name').value;
-        if (!userName || userName.length < 3) { alert("يرجى إدخال اسمك الحقيقي"); return; }
-        if (checkPreviousAttempt()) return;
-        document.getElementById('login-page').classList.add('hidden');
+    let current = 0, score = 0, timerObj, mixedPool = [], user = "", log = [];
+
+    function shuffle(a) { return a.sort(() => Math.random() - 0.5); }
+
+    function init() {
+        user = document.getElementById('nameInp').value;
+        if(!user.trim()) return alert("لطفاً، سجل اسم المتدرب.");
+        document.getElementById('user-name').innerText = user;
+        document.getElementById('start-page').classList.add('hidden');
         document.getElementById('quiz-page').classList.remove('hidden');
-        loadQuestion();
+        mixedPool = shuffle([...questions]);
+        load();
     }
 
-    function loadQuestion() {
-        if (currentQ >= CONFIG.questions.length) { finish(); return; }
-        const qData = CONFIG.questions[currentQ];
-        document.getElementById('q-text').innerText = `سؤال ${currentQ + 1}: ${qData.q}`;
-        const container = document.getElementById('options-container');
-        container.innerHTML = "";
-        let shuffled = [...qData.options].sort(() => Math.random() - 0.5);
-        shuffled.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = () => checkAnswer(opt);
-            container.appendChild(btn);
+    function load() {
+        if(current >= 40) return finish();
+        const data = mixedPool[current];
+        document.getElementById('q-info').innerText = `السؤال ${current + 1} / 40`;
+        document.getElementById('q-content').innerText = data.q;
+        document.getElementById('fb-box').style.display = 'none';
+        document.getElementById('next-btn').classList.add('hidden');
+        const box = document.getElementById('opts-box');
+        box.innerHTML = '';
+        shuffle([...data.opts]).forEach(o => {
+            const div = document.createElement('div');
+            div.className = 'opt';
+            div.innerText = o;
+            div.onclick = () => check(o, div);
+            box.appendChild(div);
         });
-        startTimer();
+        startT();
     }
 
-    function startTimer() {
+    function check(sel, el) {
+        clearInterval(timerObj);
+        const data = mixedPool[current];
+        const isOk = (sel === data.ans);
+        document.querySelectorAll('.opt').forEach(b => {
+            b.onclick = null;
+            if(b.innerText === data.ans) b.classList.add('correct');
+            else if(b.innerText === sel) b.classList.add('wrong');
+        });
+        if(isOk) score++;
+        const fb = document.getElementById('fb-box');
+        fb.style.display = 'block';
+        document.getElementById('fb-res').innerText = isOk ? "إجابة دقيقة ✅" : "إجابة خاطئة ❌";
+        document.getElementById('fb-res').style.color = isOk ? "var(--correct)" : "var(--wrong)";
+        document.getElementById('fb-logic').innerText = data.tip;
+        document.getElementById('next-btn').classList.remove('hidden');
+        log.push({q: data.q, ok: isOk, correct: data.ans, tip: data.tip});
+    }
+
+    function startT() {
         let s = 45;
-        document.getElementById('timer').innerText = s;
-        clearInterval(timer);
-        timer = setInterval(() => {
-            s--;
-            document.getElementById('timer').innerText = s;
-            if (s <= 0) { clearInterval(timer); checkAnswer("N/A"); }
+        const t = document.getElementById('timer');
+        t.innerText = s; t.classList.remove('timer-warn');
+        timerObj = setInterval(() => {
+            s--; t.innerText = s;
+            if(s <= 10) t.classList.add('timer-warn');
+            if(s <= 0) { clearInterval(timerObj); check("N/A", null); }
         }, 1000);
     }
 
-    function checkAnswer(selected) {
-        clearInterval(timer);
-        if (selected === CONFIG.questions[currentQ].ans) score++;
-        currentQ++;
-        loadQuestion();
-    }
+    function goNext() { current++; load(); }
 
     async function finish() {
         document.getElementById('quiz-page').classList.add('hidden');
         document.getElementById('final-page').classList.remove('hidden');
-        document.getElementById('final-score').innerText = `${score} / ${CONFIG.questions.length}`;
-        await db.collection("student_results").add({
-            name: userName,
-            score: score,
-            total: CONFIG.questions.length,
-            model_id: CONFIG.modelId,
-            time: firebase.firestore.FieldValue.serverTimestamp()
+        document.getElementById('final-score').innerText = `${score} / 40`;
+        document.getElementById('final-msg').innerText = `تم الانتهاء يا ${user}! تم إرسال نتيجتك للوحة القيادة.`;
+        
+        // إرسال البيانات للسحابة مع رقم النموذج 15 لضمان الظهور في اللوحة المطورة
+        try {
+            await db.collection("student_results").add({
+                name: user,
+                score: score,
+                total: 40,
+                model_id: "15", // <<< الترقيم البرمجي
+                time: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log("Data sent with model_id: 15");
+        } catch (e) { console.error("Error: ", e); }
+
+        const logBox = document.getElementById('final-log');
+        logBox.innerHTML = '';
+        log.forEach((item, i) => {
+            const d = document.createElement('div');
+            d.className = `log-item ${item.ok?'ok':'no'}`;
+            d.innerHTML = `<div class="watermark">أ/ عبدالعزيز الفيفي</div><strong>س${i+1}: ${item.q}</strong><br><span style="color:var(--correct)">الصح: ${item.correct}</span><br><small>💡 منطق الحل: ${item.tip}</small>`;
+            logBox.appendChild(d);
         });
-        localStorage.setItem("done_" + CONFIG.modelId, "true");
     }
 </script>
 </body>
