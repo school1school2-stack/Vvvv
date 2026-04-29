@@ -12,25 +12,35 @@
             --bg: #fdfaf1; --white: #ffffff; --correct: #2e7d32; --wrong: #c62828;
         }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
+        
         #protection-mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: var(--gold); z-index: 999999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+
         .quiz-card { background: var(--white); width: 100%; max-width: 950px; border-radius: 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); border-top: 12px solid var(--maroon); padding: 35px; position: relative; }
         .quiz-header { text-align: center; border-bottom: 3px double var(--gold); margin-bottom: 25px; padding-bottom: 15px; }
+        
         .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f9f9f9; padding: 12px 20px; border-radius: 15px; }
         .q-num { background: var(--maroon); color: var(--gold); padding: 5px 20px; border-radius: 30px; font-weight: bold; }
+        
         .timer-box { font-weight: 800; font-size: 1.4rem; color: var(--maroon); border: 3px solid var(--gold); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .timer-warn { background: var(--wrong); color: white; border-color: #000; animation: flash 0.6s infinite; }
         @keyframes flash { 50% { opacity: 0.3; } }
+
         .q-text { font-size: 1.4rem; font-weight: bold; margin-bottom: 25px; text-align: center; color: #111; line-height: 1.6; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .opt { padding: 18px; border: 2px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.3s; font-weight: 600; text-align: center; font-size: 1.1rem; }
+        
+        .opt { padding: 18px; border: 2px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.3s; font-weight: 600; text-align: center; font-size: 1.1rem; background: #fff; }
         .opt:hover { border-color: var(--gold); background: #fffcf0; }
+        
         .correct { background: var(--correct) !important; color: white; border-color: var(--correct) !important; }
         .wrong { background: var(--wrong) !important; color: white; border-color: var(--wrong) !important; }
+        
         .feedback { margin-top: 20px; padding: 20px; border-radius: 12px; display: none; background: #fffde7; border-right: 8px solid var(--maroon); animation: slide 0.4s ease; }
         @keyframes slide { from { opacity: 0; transform: translateY(10px); } }
-        .btn { background: var(--maroon); color: var(--gold); padding: 15px 45px; border: none; border-radius: 10px; cursor: pointer; font-size: 1.2rem; font-weight: bold; }
+
+        .btn { background: var(--maroon); color: var(--gold); padding: 15px 45px; border: none; border-radius: 10px; cursor: pointer; font-size: 1.2rem; font-weight: bold; transition: 0.3s; }
         .btn:hover { background: #000; transform: scale(1.03); }
         .hidden { display: none !important; }
+
         .log-item { padding: 15px; margin-bottom: 10px; border-radius: 10px; border-right: 10px solid; background: #fff; border: 1px solid #eee; position: relative; }
         .ok { border-right-color: var(--correct); }
         .no { border-right-color: var(--wrong); }
@@ -41,18 +51,17 @@
 
 <div id="protection-mask">
     <h1>⚠️ تنبيه أمني</h1>
-    <p>المحتوى خاص بالأستاذ عبدالعزيز الفيفي. يمنع النسخ.</p>
+    <p>المحتوى خاص بالأستاذ عبدالعزيز الفيفي. يمنع النسخ أو التصوير.</p>
 </div>
 
 <div class="quiz-card" id="main-app">
     <div class="quiz-header">
         <h3 id="sig" style="margin:0; color:var(--maroon);">أ / عبدالعزيز الفيفي - ثانوية الأمير عبدالمجيد</h3>
-        <h2 style="margin:10px 0;">النموذج (15) المطور - القياس المقنع </h2>
+        <h2 style="margin:10px 0;">النموذج (15) المطور - القياس المقنع</h2>
     </div>
 
     <div id="start-page" style="text-align: center;">
-        <p style="color: #666; margin-bottom: 25px;">تم تطوير هذا النموذج باستبدال خيارات "كل ما سبق" بخيارات دقيقة لرفع مستوى التركيز.</p>
-        <input type="text" id="nameInp" placeholder="اسم المتدرب..." style="width: 70%; padding: 15px; border-radius: 10px; border: 2px solid var(--maroon); text-align: center; font-size: 1.2rem; margin-bottom: 30px; outline: none;">
+        <input type="text" id="nameInp" placeholder="سجل اسم المتدرب هنا..." style="width: 70%; padding: 15px; border-radius: 10px; border: 2px solid var(--maroon); text-align: center; font-size: 1.2rem; margin-bottom: 30px; outline: none;">
         <br><button class="btn" onclick="init()">بدء التحدي ⮕</button>
     </div>
 
@@ -87,7 +96,7 @@
 </div>
 
 <script>
-    // إعدادات Firebase لربط النتائج بلوحة التحكم
+    // إعدادات Firebase الخاصة بك لضمان الربط مع لوحة التحكم
     const firebaseConfig = {
         apiKey: "AIzaSyBkCO7FDQXd89YDf843J4_AtvEFvzzt-R0",
         authDomain: "aztlg-494c3.firebaseapp.com",
@@ -110,18 +119,19 @@
     const questions = [
         { q: "الناجحون لا يشتكون من الظروف، بل يستثمرونها لصالحهم، بينما الفاشلون يفتخرون بها.", opts: ["الناجحون", "يشتكون", "يستثمرونها", "يفتخرون"], ans: "يفتخرون", tip: "التصحيح: (يتذمرون). الناجح يطوع الظروف، بينما الفاشل يختلق منها أعذاراً.", cat: "خطأ سياقي" },
         { q: "من زاد حياؤه زاد أدبه، ومن قل أدبه زاد قدره في قلوب الناس.", opts: ["زاد", "أدبه", "قل", "زاد"], ans: "زاد", tip: "التصحيح: (قلّ). قلة الأدب تضعف القيمة والقدر في نفوس الآخرين.", cat: "خطأ سياقي" },
-        { q: "العظمة الحقيقية هي أن تبتسم في وجه الصعاب، وأن تبكي في وجه النجاح.", opts: ["العظمة", "تبتسم", "الصعاب", "تبكي"], ans: "تبكي", tip: "التصحيح: (تزهو) أو (تفرح). البكاء عند النجاح لا يتسق مع سياق القوة والعظمة المذكور.", cat: "خطأ سياقي" },
+        { q: "العظمة الحقيقية هي أن تبتسم في وجه الصعاب، وأن تبكي في وجه النجاح.", opts: ["العظمة", "تبتسم", "الصعاب", "تبكي"], ans: "تبكي", tip: "التصحيح: (تزهو) أو (تفرح). البكاء عند النجاح لا يتسق مع السياق.", cat: "خطأ سياقي" },
         { q: "الإنسان الذي يرى الدنيا بمنظار أسود، يظن أن السعادة بعيدة عنه وهي خلفه.", opts: ["أسود", "السعادة", "بعيدة", "خلفه"], ans: "خلفه", tip: "التصحيح: (أمامه). المتشائم لا يرى السعادة القريبة منه فيظنها بعيدة.", cat: "خطأ سياقي" },
-        { q: "غابة : أشجار", opts: ["كتاب : صفحات", "مدينة : بيوت", "مدرسة : طلاب", "جيش : جنود"], ans: "كتاب : صفحات", tip: "العلاقة (مكان ومكوناته الأساسية)؛ الغابة مكوّنها الأشجار والكتاب مكوّنه الصفحات.", cat: "تناظر" },
-        { q: "تعب : نوم", opts: ["عطش : ماء", "جوع : أكل", "جهل : علم", "مرض : دواء"], ans: "عطش : ماء", tip: "العلاقة (احتياج وما يشبع النقص فيه)؛ التعب ينهيه النوم والعطش ينهيه الماء.", cat: "تناظر" },
-        { q: "رأس : تاج", opts: ["معصم : سوار", "إصبع : خاتم", "قدم : نعل", "عنق : قلادة"], ans: "عنق : قلادة", tip: "العلاقة (عضو وزينته الخارجية)؛ التاج للرأس والقلادة للعنق.", cat: "تناظر" },
+        { q: "غابة : أشجار", opts: ["كتاب : صفحات", "مدينة : بيوت", "مدرسة : طلاب", "جيش : جنود"], ans: "كتاب : صفحات", tip: "مكان ومكوناته؛ الغابة مكونها الأشجار والكتاب مكونه الصفحات.", cat: "تناظر" },
+        { q: "تعب : نوم", opts: ["عطش : ماء", "جوع : أكل", "جهل : علم", "مرض : دواء"], ans: "عطش : ماء", tip: "احتياج وما ينهيه؛ التعب ينهيه النوم والعطش ينهيه الماء.", cat: "تناظر" },
+        { q: "رأس : تاج", opts: ["معصم : سوار", "إصبع : خاتم", "قدم : نعل", "عنق : قلادة"], ans: "عنق : قلادة", tip: "عضو وزينته؛ التاج للرأس والقلادة للعنق.", cat: "تناظر" },
         { q: "كن كـ ........ ، يرميك الناس بالحجر فترميهم بـ ........", opts: ["النخيل - الثمر", "البحر - السمك", "الأرض - الورد", "السماء - Mطر"], ans: "النخيل - الثمر", tip: "حكمة تدعو لمقابلة الإساءة بالإحسان الدائم والعطاء المثمر.", cat: "إكمال جمل" },
-        { q: "إن الصمت وقت ........ قوة، والكلام وقت ........ حكمة.", opts: ["الغضب - الحاجة", "الحزن - الفرح", "العمل - اللعب", "القوة - الضعف"], ans: "الغضب - الحاجة", tip: "الصمت في الغضب يمنع الزلل، والكلام عند الحاجة يظهر العقل.", cat: "إكمال جمل" },
-        { q: "نص: 'تعد الشمس المصدر الرئيسي للطاقة، وبدونها تتجمد المحيطات وتستحيل الحياة.' - العلاقة بين الشمس والحياة هي:", opts: ["طردية", "تلازمية", "عكسية", "ثانوية"], ans: "تلازمية", tip: "تلازمية: تعني أن وجود الحياة (المعلول) مرتبط كلياً بوجود الشمس (العلة).", cat: "استيعاب" }
+        { q: "إن الصمت وقت ........ قوة، والكلام وقت ........ حكمة.", opts: ["الغضب - الحاجة", "الحزن - الفرح", "العمل - اللعب", "القوة - الضعف"], ans: "الغضب - الحاجة", tip: "الصمت في الغضب قوة، والكلام عند الحاجة حكمة.", cat: "إكمال جمل" },
+        { q: "نص: 'تعد الشمس المصدر الرئيسي للطاقة، وبدونها تتجمد المحيطات وتستحيل الحياة.' - العلاقة بين الشمس والحياة هي:", opts: ["طردية", "تلازمية", "عكسية", "ثانوية"], ans: "تلازمية", tip: "تلازمية: وجود الحياة مرتبط كلياً بوجود الشمس.", cat: "استيعاب" }
     ];
 
+    // تكرار الأسئلة للوصول لـ 40 سؤالاً كما طلبت
     while(questions.length < 40) {
-        questions.push({...questions[Math.floor(Math.random()*questions.length)], isDup: true});
+        questions.push({...questions[Math.floor(Math.random()*10)], isDup: true});
     }
 
     let current = 0, score = 0, timerObj, mixedPool = [], user = "", log = [];
@@ -169,7 +179,7 @@
         if(isOk) score++;
         const fb = document.getElementById('fb-box');
         fb.style.display = 'block';
-        document.getElementById('fb-res').innerText = isOk ? "إجابة دقيقة ومنطقية ✅" : "خطأ سياقي! ركز أكثر ❌";
+        document.getElementById('fb-res').innerText = isOk ? "إجابة دقيقة ✅" : "إجابة خاطئة ❌";
         document.getElementById('fb-res').style.color = isOk ? "var(--correct)" : "var(--wrong)";
         document.getElementById('fb-logic').innerText = data.tip;
         document.getElementById('next-btn').classList.remove('hidden');
@@ -193,18 +203,19 @@
         document.getElementById('quiz-page').classList.add('hidden');
         document.getElementById('final-page').classList.remove('hidden');
         document.getElementById('final-score').innerText = `${score} / 40`;
-        document.getElementById('final-msg').innerText = `انتهى التحدي يا ${user}! تم التركيز في هذا النموذج على دقة الاستبعاد.`;
+        document.getElementById('final-msg').innerText = `تم الانتهاء يا ${user}! تم إرسال نتيجتك للوحة القيادة.`;
         
-        // إرسال البيانات للسحابة مع تحديد رقم النموذج (15) لربطها بلوحة التحكم
+        // إرسال البيانات للسحابة مع رقم النموذج 15 لضمان الظهور في اللوحة المطورة
         try {
             await db.collection("student_results").add({
                 name: user,
                 score: score,
                 total: 40,
-                model_id: "15", // الترقيم لضمان السحب في لوحة القيادة
+                model_id: "15", // <<< الترقيم البرمجي
                 time: firebase.firestore.FieldValue.serverTimestamp()
             });
-        } catch (e) { console.error("Error saving: ", e); }
+            console.log("Data sent with model_id: 15");
+        } catch (e) { console.error("Error: ", e); }
 
         const logBox = document.getElementById('final-log');
         logBox.innerHTML = '';
