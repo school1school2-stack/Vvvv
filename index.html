@@ -14,39 +14,35 @@
             --bg: #fdfaf1; --white: #ffffff; --correct: #2e7d32; --wrong: #c62828;
         }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; color: var(--dark); }
-        
         #protection-mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: var(--gold); z-index: 999999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-
         .quiz-card { background: var(--white); width: 100%; max-width: 950px; border-radius: 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); border-top: 15px solid var(--maroon); padding: 35px; position: relative; }
         .header { text-align: center; border-bottom: 2px solid var(--gold); margin-bottom: 30px; padding-bottom: 20px; }
-        
         .status { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #f9f9f9; padding: 15px 25px; border-radius: 15px; border: 1px solid #eee; }
-        .timer-box { font-weight: 900; font-size: 1.5rem; width: 60px; height: 60px; border: 4px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .timer-box { font-weight: 900; font-size: 1.5rem; width: 60px; height: 60px; border: 4px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .timer-warn { background: var(--wrong); color: white; border-color: #000; animation: blink 0.8s infinite; }
         @keyframes blink { 50% { opacity: 0.5; } }
-
-        .q-text { font-size: 1.6rem; font-weight: bold; margin-bottom: 30px; text-align: center; line-height: 1.6; }
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .opt { padding: 20px; border: 2px solid #e0e0e0; border-radius: 15px; cursor: pointer; transition: 0.3s; font-weight: 600; background: #fff; text-align: center; font-size: 1.2rem; }
-        .opt:hover { border-color: var(--gold); background: #fffdf5; transform: translateY(-3px); }
+        .passage { background: #fffde7; padding: 20px; border-radius: 15px; border-right: 8px solid var(--gold); margin-bottom: 20px; line-height: 1.8; font-size: 1.1rem; }
+        .q-text { font-size: 1.5rem; font-weight: bold; margin-bottom: 25px; text-align: center; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .opt { padding: 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; transition: 0.3s; font-weight: 600; background: #fff; text-align: center; }
+        .opt:hover { border-color: var(--gold); background: #fffdf5; }
         .ok-opt { background: var(--correct) !important; color: white; border-color: var(--correct) !important; }
         .no-opt { background: var(--wrong) !important; color: white; border-color: var(--wrong) !important; }
-
-        .feedback { margin-top: 25px; padding: 20px; border-radius: 15px; display: none; background: #f0f4f1; border-right: 8px solid var(--correct); }
+        .feedback { margin-top: 20px; padding: 20px; border-radius: 12px; display: none; background: #f0f4f1; border-right: 8px solid var(--correct); }
         .btn-action { background: var(--maroon); color: var(--gold); padding: 15px 50px; border: none; border-radius: 10px; cursor: pointer; font-size: 1.2rem; font-weight: bold; margin-top: 20px; }
         .hidden { display: none !important; }
-        
-        .log-item { padding: 20px; margin-bottom: 15px; border-radius: 12px; border-right: 12px solid; background: #fff; border: 1px solid #eee; }
+        .log-item { padding: 15px; margin-bottom: 10px; border-radius: 10px; border-right: 10px solid; background: #fff; border: 1px solid #eee; }
         .ok { border-right-color: var(--correct); }
         .no { border-right-color: var(--wrong); }
-        .watermark { font-size: 0.7rem; color: #ccc; text-align: left; }
+        .watermark { font-size: 0.7rem; color: #ccc; }
+        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
 <div id="protection-mask">
     <h1>🔒 محتوى محمي</h1>
-    <p>حقوق الملكية الفكرية محفوظة للأستاذ عبدالعزيز الفيفي. يمنع النسخ.</p>
+    <p>حقوق الملكية الفكرية محفوظة للأستاذ عبدالعزيز الفيفي.</p>
 </div>
 
 <div class="quiz-card" id="main-frame">
@@ -56,16 +52,17 @@
     </div>
 
     <div id="intro-page" style="text-align: center;">
-        <input type="text" id="u-name" placeholder="أدخل اسمك الثلاثي للمتابعة..." style="width: 80%; padding: 20px; border-radius: 12px; border: 2px solid var(--gold); text-align: center; font-size: 1.2rem; margin-bottom: 30px; outline: none;">
-        <br><button class="btn-action" onclick="start()">بدأ الاختبار السحابي 🚀</button>
+        <input type="text" id="u-name" placeholder="أدخل اسمك الثلاثي..." style="width: 80%; padding: 20px; border-radius: 12px; border: 2px solid var(--gold); text-align: center; font-size: 1.2rem; margin-bottom: 25px;">
+        <br><button class="btn-action" onclick="start()">بدء الاختبار 🚀</button>
     </div>
 
     <div id="quiz-page" class="hidden">
         <div class="status">
             <div>الطالب: <span id="n-display" style="color:var(--maroon); font-weight:bold;"></span></div>
-            <div id="q-counter" style="font-weight:bold;"></div>
+            <div id="q-counter"></div>
             <div id="timer" class="timer-box">45</div>
         </div>
+        <div id="p-area" class="passage hidden"></div>
         <div id="q-area" class="q-text"></div>
         <div id="opt-area" class="options-grid"></div>
         <div id="fb-area" class="feedback">
@@ -73,23 +70,23 @@
             <p id="fb-body" style="margin:10px 0 0;"></p>
         </div>
         <div style="text-align:center;">
-            <button id="next-btn" class="btn-action hidden" onclick="goNext()">السؤال التالي ⮕</button>
+            <button id="next-btn" class="btn-action hidden" onclick="goNext()">التالي ⮕</button>
         </div>
     </div>
 
     <div id="final-page" class="hidden">
         <div style="text-align: center; background: var(--maroon); color: var(--gold); padding: 40px; border-radius: 20px; margin-bottom: 30px;">
             <h1 id="final-score" style="font-size: 4rem; margin:0;"></h1>
-            <p id="final-msg" style="font-size: 1.2rem;"></p>
+            <p id="final-msg"></p>
         </div>
-        <h3>📝 سجل الأداء التعليمي:</h3>
+        <h3>📝 السجل التعليمي وتحليل الأداء:</h3>
         <div id="final-log"></div>
-        <div style="text-align:center;"><button class="btn-action" onclick="location.reload()">إعادة المحاولة 🔄</button></div>
+        <div style="text-align:center;"><button class="btn-action" onclick="location.reload()">إعادة 🔄</button></div>
     </div>
 </div>
 
 <script>
-    // تهيئة الربط بالسحابة
+    // تهيئة السحابة
     const firebaseConfig = {
         apiKey: "AIzaSyBkCO7FDQXd89YDf843J4_AtvEFvzzt-R0",
         authDomain: "aztlg-494c3.firebaseapp.com",
@@ -102,26 +99,61 @@
     const db = firebase.firestore();
 
     const OWNER = "أ / عبدالعزيز الفيفي - خبير القدرات";
-    function checkSafe() {
+    setInterval(() => {
         const s = document.getElementById('sig');
         if(!s || s.innerText.trim() !== OWNER) {
             document.getElementById('protection-mask').style.display = 'flex';
             document.getElementById('main-frame').style.display = 'none';
         }
-    }
-    setInterval(checkSafe, 1000);
+    }, 1000);
 
     const questions = [
-        {q: "ريش : طائر", opts: ["شعر : ثدييات", "جلد : إنسان", "وبر : إبل", "صوف : غنم"], ans: "شعر : ثدييات", tip: "الريش يغطي الطائر، والشعر يغطي الثدييات كقاعدة عامة.", cat: "تناظر"},
-        {q: "ماء : حياة", opts: ["نوم : راحة", "أكل : شبع", "هواء : تنفس", "نار : حرق"], ans: "نوم : راحة", tip: "الماء سبب للحياة، والنوم سبب للراحة.", cat: "تناظر"},
-        {q: "قلم : كتابة", opts: ["مفتاح : فتح", "سكين : قطع", "إبرة : خياطة", "ريشة : رسم"], ans: "مفتاح : فتح", tip: "القلم أداة وظيفتها الكتابة، والمفتاح وظيفته الفتح.", cat: "تناظر"}
+        {q: "ريش : طائر", opts: ["شعر : ثدييات", "جلد : إنسان", "وبر : إبل", "صوف : غنم"], ans: "شعر : ثدييات", tip: "الريش يغطي الطائر، والشعر يغطي الثدييات كفئة عامة.", cat: "تناظر"},
+        {q: "ماء : حياة", opts: ["نوم : راحة", "أكل : شبع", "هواء : تنفس", "نار : حرق"], ans: "نوم : راحة", tip: "علاقة احتياج؛ الماء ضروري للحياة والنوم ضروري للراحة.", cat: "تناظر"},
+        {q: "فصل : مدرسة", opts: ["غرفة : فندق", "غصن : شجرة", "لاعب : فريق", "كتاب : مكتبة"], ans: "غرفة : فندق", tip: "علاقة جزء من كل؛ الفصل جزء من المدرسة والغرفة جزء من الفندق.", cat: "تناظر"},
+        {q: "قلم : كتابة", opts: ["مفتاح : فتح", "سكين : قطع", "إبرة : خياطة", "ريشة : رسم"], ans: "مفتاح : فتح", tip: "علاقة أداة ووظيفتها؛ القلم للكتابة والمفتاح للفتح.", cat: "تناظر"},
+        {q: "أسد : عرين", opts: ["صقر : وكر", "نحلة : خلية", "إنسان : منزل", "جمل : مراح"], ans: "صقر : وكر", tip: "علاقة مكان؛ الأسد يسكن العرين والصقر يسكن الوكر.", cat: "تناظر"},
+        {q: "قائد : جيش", opts: ["مدير : موظفين", "معلم : طلاب", "مدرب : لاعبين", "أب : أسرة"], ans: "مدير : موظفين", tip: "علاقة رئاسة وتنظيم؛ القائد يرأس الجيش والمدير يرأس الموظفين.", cat: "تناظر"},
+        {q: "شمس : ضياء", opts: ["نار : دفء", "وردة : رائحة", "مطر : زرع", "كهرباء : إنارة"], ans: "نار : دفء", tip: "علاقة مصدر؛ الشمس مصدر الضياء والنار مصدر الدفء.", cat: "تناظر"},
+        {q: "سفينة : مرسى", opts: ["طائرة : مدرج", "سيارة : موقف", "قطار : محطة", "خيل : إسطبل"], ans: "طائرة : مدرج", tip: "مكان التوقف الرسمي؛ السفينة في المرسى والطائرة في المدرج.", cat: "تناظر"},
+        {q: "إن طول ........ في عيوب الآخرين، يجعلك ........ عن إصلاح عيوبك.", opts: ["التفكير - تغفل", "الحديث - تسرع", "النظر - تهتم", "البحث - تنسى"], ans: "التفكير - تغفل", tip: "الانشغال بعيوب الناس يؤدي للغفلة عن الذات.", cat: "إكمال جمل"},
+        {q: "الاعتذار لا يعني دائماً أنك على ........ ، بل يعني أنك تقدر ........ أكثر من كبريائك.", opts: ["خطأ - العلاقة", "صواب - المال", "حق - الوقت", "يقين - الناس"], ans: "خطأ - العلاقة", tip: "الاعتذار سمو لتقدير العلاقات الإنسانية.", cat: "إكمال جمل"},
+        {q: "من أراد أن ........ فليتعلم كيف ........ أولاً.", opts: ["يقود - يطيع", "يربح - يخسر", "ينجح - يفشل", "يتكلم - يصمت"], ans: "يقود - يطيع", tip: "الانضباط (الطاعة) هو الطريق للقيادة.", cat: "إكمال جمل"},
+        {q: "يجب أن تكون نيتك ........ حتى لو كانت ظروفك ........", opts: ["حسنة - سيئة", "صادقة - قاسية", "واضحة - غامضة", "قوية - مهزوزة"], ans: "حسنة - سيئة", tip: "ثبات النية الطيبة رغم صعوبة الظروف.", cat: "إكمال جمل"},
+        {q: "الحياة مثل ........ ، إذا لم تتقدم فيها فستبقى في ........", opts: ["السباق - الخلف", "النهر - مكانك", "الدراجة - الأسفل", "المدرسة - البيت"], ans: "السباق - الخلف", tip: "التوقف عن التطور يعني التراجع.", cat: "إكمال جمل"},
+        {q: "الأخلاق هي ........ التي تطل منها على ........ العالم.", opts: ["النافذة - جمال", "المرآة - حقيقة", "اللغة - قلوب", "البوابة - كنوز"], ans: "النافذة - جمال", tip: "الأخلاق تحسن رؤيتك للحياة.", cat: "إكمال جمل"},
+        {q: "لا تجعل ........ الماضي يفسد ........ الحاضر.", opts: ["أحزان - أفراح", "ذكريات - أحلام", "فشل - فرص", "غبار - هواء"], ans: "أحزان - أفراح", tip: "فصل مشاعر الماضي عن بهجة الحاضر.", cat: "إكمال جمل"},
+        {q: "من زاد حياؤه زاد طمعه، ومن كان له حياء كان له وقار.", opts: ["حياؤه", "طمعه", "وقار", "زاد"], ans: "طمعه", tip: "الخطأ في 'طمعه'؛ الحياء يمنع الطمع. التصحيح: 'قل طمعه'.", cat: "خطأ سياقي"},
+        {q: "يجب عليك أن تبتسم دائماً، لأن الابتسامة تجعل القلوب تبتعد عنك.", opts: ["تبتسم", "دائماً", "تجعل", "تبتعد"], ans: "تبتعد", tip: "الابتسامة تقرب القلوب ولا تبعدها.", cat: "خطأ سياقي"},
+        {q: "العظمة ليست في ألا تسقط أبداً، بل في أن تبقى ساقطاً كلما سقطت.", opts: ["العظمة", "تسقط", "تبقى", "ساقطاً"], ans: "تبقى", tip: "العظمة في النهوض لا في البقاء ساقطاً.", cat: "خطأ سياقي"},
+        {q: "الناجح هو الذي يغلق فمه قبل أن يغلق الناس آذانهم، ويفتح أذنيه قبل أن يفتح الناس أفواههم.", opts: ["الناجح", "يغلق فمه", "يغلق الناس", "أفواههم"], ans: "يغلق الناس", tip: "الصواب: يفتح الناس آذانهم (أي يستمعون له بشغف).", cat: "خطأ سياقي"},
+        {q: "العمل بجد هو الطريق الوحيد للفشل، لذا يجب عليك الكسل لتنجح.", opts: ["بجد", "الوحيد", "للفشل", "الكسل"], ans: "للفشل", tip: "الجد هو طريق النجاح.", cat: "خطأ سياقي"},
+        {q: "الصدق صفة قبيحة، يجب على كل إنسان أن يتحلى بها لينال رضا الله.", opts: ["الصدق", "قبيحة", "إنسان", "يتحلى"], ans: "قبيحة", tip: "الصدق صفة حميدة وجميلة.", cat: "خطأ سياقي"},
+        {p: "تعتبر أشجار المانغروف نظاماً دفاعياً طبيعياً، فهي تمتص قوة الأمواج وتمنع تآكل التربة، وتوفر مأوى آمناً لصغار الأسماك.", q: "الوظيفة المزدوجة للمانغروف في النص هي:", opts: ["حماية السواحل وحماية الحياة البحرية", "إنتاج الخشب والثمار", "جذب السياح وزيادة الأمطار", "تبريد الجو ومنع الرياح"], ans: "حماية السواحل وحماية الحياة البحرية", tip: "النص ذكر دورها الدفاعي للسواحل والمأوى للأسماك.", cat: "استيعاب"},
+        {p: "اللغة العربية تمتاز بالاشتقاق، مما يمنحها مرونة هائلة في استيعاب المكتشفات العلمية الحديثة وتوليد المصطلحات.", q: "الاشتقاق في اللغة العربية يؤدي إلى:", opts: ["صعوبتها", "مرونتها", "جمودها", "ندرة مفرداتها"], ans: "مرونتها", tip: "الاشتقاق يولد المرونة حسب النص.", cat: "استيعاب"},
+        {p: "يفرز الجسم هرمون الميلاتونين في الظلام، وهو المسؤول عن جودة النوم، ويتأثر إنتاجه سلباً بضوء الشاشات الزرقاء.", q: "ما الذي يقلل من جودة النوم حسب النص؟", opts: ["الظلام", "ضوء الشاشات", "هرمون الميلاتونين", "الهدوء"], ans: "ضوء الشاشات", tip: "ضوء الشاشات يعطل إفراز هرمون النوم.", cat: "استيعاب"},
+        {p: "الذكاء الاصطناعي يعتمد على تحليل البيانات الضخمة، لكنه يفتقر تماماً للحس الإبداعي والعاطفة البشرية.", q: "تتفوق البشرية على الذكاء الاصطناعي في:", opts: ["سرعة الحساب", "تخزين البيانات", "الحس الإبداعي", "العمل المستمر"], ans: "الحس الإبداعي", tip: "الإبداع والعاطفة ميزة بشرية مفقودة في الآلة.", cat: "استيعاب"},
+        {p: "تحلية المياه تهدف لسد العجز المائي نتيجة النمو السكاني، مع التوجه لاستخدام الطاقة الشمسية لخفض التكلفة الاقتصادية.", q: "الهدف الاقتصادي المذكور في النص هو:", opts: ["سد العجز", "خفض التكلفة", "زيادة السكان", "بناء المحطات"], ans: "خفض التكلفة", tip: "استخدام الشمس يهدف لتقليل المصاريف (التكلفة).", cat: "استيعاب"},
+        {p: "الاحتراق النفسي ينتج عن تراكم ضغوط العمل، ويؤدي لانخفاض الإنتاجية والشعور بالاستنزاف العاطفي.", q: "الاحتراق النفسي هو:", opts: ["مرض عضوي", "نتيجة لضغوط العمل", "محفز للنجاح", "غضب مؤقت"], ans: "نتيجة لضغوط العمل", tip: "النص ربطه بضغوط العمل التراكمية.", cat: "استيعاب"},
+        {p: "الاستدامة هي تلبية احتياجات الحاضر دون المساس بحقوق الأجيال القادمة في الموارد الطبيعية.", q: "الاستدامة توازن بين:", opts: ["الماضي والحاضر", "الحاضر والمستقبل", "الغنى والفقر", "العلم والجهل"], ans: "الحاضر والمستقبل", tip: "الحاضر (احتياجاتنا) والمستقبل (حقوق الأجيال).", cat: "استيعاب"},
+        {p: "القراءة السريعة تتطلب تدريباً لتوسيع المدى البصري لزيادة كمية الكلمات في النظرة الواحدة وتقليل زمن التراجع.", q: "توسيع المدى البصري يهدف لـ:", opts: ["تقوية النظر", "زيادة كمية الكلمات المقروءة", "حفظ النص", "تحسين الخط"], ans: "زيادة كمية الكلمات المقروءة", tip: "الهدف من توسيع المدى هو التقاط كلمات أكثر بسرعة.", cat: "استيعاب"},
+        {q: "المفردة الشاذة: مكة - المدينة - القدس - الرياض", opts: ["مكة", "المدينة", "القدس", "الرياض"], ans: "الرياض", tip: "الرياض عاصمة سياسية، والبقية مدن دينية مقدسة.", cat: "مفردة شاذة"},
+        {q: "المفردة الشاذة: ذهب - فضة - نحاس - خشب", opts: ["ذهب", "فضة", "نحاس", "خشب"], ans: "خشب", tip: "الخشب ليس معدناً، والبقية معادن.", cat: "مفردة شاذة"},
+        {q: "المفردة الشاذة: عطارد - المريخ - الزهرة - الشمس", opts: ["عطارد", "المريخ", "الزهرة", "الشمس"], ans: "الشمس", tip: "الشمس نجم، والبقية كواكب.", cat: "مفردة شاذة"},
+        {q: "المفردة الشاذة: أسد - نمر - فهد - أرنب", opts: ["أسد", "نمر", "فهد", "أرنب"], ans: "أرنب", tip: "الأرنب حيوان أليف وعاشب، والبقية مفترسات.", cat: "مفردة شاذة"},
+        {q: "المفردة الشاذة: جرام - لتر - كيلو - طن", opts: ["جرام", "لتر", "كيلو", "طن"], ans: "لتر", tip: "اللتر للسوائل (حجم)، والبقية للكتلة (وزن).", cat: "مفردة شاذة"},
+        {q: "ما الكلمة المرتبطة بـ 'صيف'؟", opts: ["مكيف", "معطف", "مطر", "ثلج"], ans: "مكيف", tip: "علاقة ارتباط وظيفي.", cat: "ارتباط"},
+        {q: "الارتباط: 'طائرة : مطار' مثل 'سفينة : ........'", opts: ["بحر", "ميناء", "رصيف", "شراع"], ans: "ميناء", tip: "الميناء مكان توقف السفن الرسمي.", cat: "ارتباط"},
+        {q: "ما الكلمة التي لا تنتمي لمجموعة 'الحمضيات'؟", opts: ["برتقال", "ليمون", "يوسفي", "موز"], ans: "موز", tip: "الموز ليس من الحمضيات.", cat: "ارتباط"},
+        {q: "كلمة 'نحلة' ترتبط بـ 'خلية' كما أن 'أسد' يرتبط بـ:", opts: ["غابة", "فريسة", "عرين", "زئير"], ans: "عرين", tip: "علاقة مكان المسكن.", cat: "ارتباط"},
+        {q: "الارتباط: 'فصل : مدرسة' مثل 'غرفة : ........'", opts: ["فندق", "شارع", "حديقة", "مطعم"], ans: "فندق", tip: "علاقة الجزء من الكل.", cat: "ارتباط"}
     ];
 
     let current = 0, score = 0, timerObj, list = [], user = "", log = [];
 
     function start() {
         user = document.getElementById('u-name').value;
-        if(!user.trim()) return alert("يرجى إدخال الاسم.");
+        if(!user.trim()) return alert("لطفاً أدخل الاسم.");
         document.getElementById('n-display').innerText = user;
         document.getElementById('intro-page').classList.add('hidden');
         document.getElementById('quiz-page').classList.remove('hidden');
@@ -131,41 +163,42 @@
 
     function load() {
         if(current >= list.length) return finish();
-        const data = list[current];
+        const d = list[current];
         document.getElementById('q-counter').innerText = `سؤال ${current+1} / ${list.length}`;
-        document.getElementById('q-area').innerText = data.q;
+        document.getElementById('q-area').innerText = d.q;
         document.getElementById('fb-area').style.display = 'none';
         document.getElementById('next-btn').classList.add('hidden');
         
-        const area = document.getElementById('opt-area');
-        area.innerHTML = '';
-        [...data.opts].sort(() => Math.random() - 0.5).forEach(o => {
+        const pa = document.getElementById('p-area');
+        if(d.p) { pa.innerText = d.p; pa.classList.remove('hidden'); }
+        else { pa.classList.add('hidden'); }
+
+        const oa = document.getElementById('opt-area');
+        oa.innerHTML = '';
+        [...d.opts].sort(() => Math.random() - 0.5).forEach(o => {
             const b = document.createElement('div');
             b.className = 'opt'; b.innerText = o;
             b.onclick = () => check(o, b);
-            area.appendChild(b);
+            oa.appendChild(b);
         });
         startT();
     }
 
     function check(sel, el) {
         clearInterval(timerObj);
-        const data = list[current];
-        const isOk = (sel === data.ans);
+        const d = list[current];
+        const isOk = (sel === d.ans);
         if(isOk) score++;
-        
         document.querySelectorAll('.opt').forEach(b => {
             b.onclick = null;
-            if(b.innerText === data.ans) b.classList.add('ok-opt');
+            if(b.innerText === d.ans) b.classList.add('ok-opt');
             else if(b.innerText === sel) b.classList.add('no-opt');
         });
-        
-        const f = document.getElementById('fb-area');
-        f.style.display = 'block';
-        document.getElementById('fb-head').innerText = isOk ? "✅ إجابة صحيحة" : "❌ إجابة خاطئة";
-        document.getElementById('fb-body').innerText = data.tip;
+        document.getElementById('fb-area').style.display = 'block';
+        document.getElementById('fb-head').innerText = isOk ? "✅ رائع!" : "❌ خيرها في غيرها";
+        document.getElementById('fb-body').innerText = d.tip;
         document.getElementById('next-btn').classList.remove('hidden');
-        log.push({q: data.q, ok: isOk, correct: data.ans, tip: data.tip, cat: data.cat});
+        log.push({q: d.q, ok: isOk, correct: d.ans, tip: d.tip, cat: d.cat});
     }
 
     function startT() {
@@ -182,21 +215,7 @@
     function goNext() { current++; load(); }
 
     function finish() {
-        document.getElementById('quiz-page').classList.add('hidden');
-        document.getElementById('final-page').classList.remove('hidden');
-        document.getElementById('final-score').innerText = `${score} / ${list.length}`;
-        document.getElementById('final-msg').innerText = `انتهى التحدي يا ${user}! تم إرسال تقريرك للسحابة بنجاح.`;
-        
-        const logBox = document.getElementById('final-log');
-        logBox.innerHTML = '';
-        log.forEach((item, i) => {
-            const d = document.createElement('div');
-            d.className = `log-item ${item.ok?'ok':'no'}`;
-            d.innerHTML = `<div class="watermark">أ/ عبدالعزيز الفيفي</div><strong>س${i+1}: ${item.q}</strong><br>الجواب الصحيح: ${item.correct}<br><small>💡 ${item.tip}</small>`;
-            logBox.appendChild(d);
-        });
-
-        // --- نص أمر الربط بالسحابة (تمت الإضافة هنا بحذر) ---
+        // إرسال البيانات للسحابة فوراً
         db.collection("student_results").add({
             name: user,
             score: score,
@@ -204,6 +223,20 @@
             details: log.map(l => ({ question: l.q, isCorrect: l.ok, category: l.cat })),
             time: firebase.firestore.FieldValue.serverTimestamp()
         }).catch(err => console.log("Cloud Error:", err));
+
+        document.getElementById('quiz-page').classList.add('hidden');
+        document.getElementById('final-page').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${score} / ${list.length}`;
+        document.getElementById('final-msg').innerText = `تهانينا يا ${user}! تم إرسال تقريرك للسحابة بنجاح.`;
+        
+        const lb = document.getElementById('final-log');
+        lb.innerHTML = '';
+        log.forEach((item, i) => {
+            const div = document.createElement('div');
+            div.className = `log-item ${item.ok?'ok':'no'}`;
+            div.innerHTML = `<div class="watermark">أ/ عبدالعزيز الفيفي</div><strong>س${i+1}: [${item.cat}] ${item.q}</strong><br>الجواب النموذجي: ${item.correct}<br><small>💡 الشرح: ${item.tip}</small>`;
+            lb.appendChild(div);
+        });
     }
 </script>
 </body>
