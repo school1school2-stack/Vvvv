@@ -4,64 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>النموذج (5) المطور - أ/ عبدالعزيز الفيفي</title>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
     <style>
         :root { 
             --primary: #212121; --secondary: #b19410; --accent: #ffc107; 
             --bg: #f5f5f5; --white: #ffffff; --correct: #1b5e20; --wrong: #b71c1c;
         }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; color: #333; }
-        .quiz-card { background: var(--white); width: 100%; max-width: 950px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 15px solid var(--secondary); padding: 30px; }
+        .quiz-card { background: var(--white); width: 100%; max-width: 950px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 15px solid var(--secondary); padding: 30px; position: relative; }
         .header { text-align: center; border-bottom: 3px double var(--secondary); margin-bottom: 25px; padding-bottom: 20px; }
         .status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fafafa; padding: 15px; border-radius: 12px; border: 1px solid #ddd; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
         .opt-btn { padding: 20px; border: 2px solid #eee; border-radius: 15px; cursor: pointer; transition: 0.3s; font-weight: 600; background: #fff; text-align: center; font-size: 1.1rem; }
         .opt-btn:hover { border-color: var(--secondary); background: #fefcf0; }
-        .correct { background: var(--correct) !important; color: white; }
-        .wrong { background: var(--wrong) !important; color: white; }
+        .correct { background: var(--correct) !important; color: white; border-color: var(--correct) !important; }
+        .wrong { background: var(--wrong) !important; color: white; border-color: var(--wrong) !important; }
         .btn-main { background: var(--primary); color: var(--accent); padding: 18px 50px; border: 2px solid var(--secondary); border-radius: 12px; cursor: pointer; font-size: 1.2rem; font-weight: bold; }
         .hidden { display: none !important; }
         
-        /* تصميم جدول التقرير (مثل الصورة) */
+        /* تصميم جدول التقرير النهائي (مثل الصورة) */
         .report-table { width: 100%; border-collapse: collapse; margin-top: 25px; background: white; }
-        .report-table th, .report-table td { border: 1px solid #eee; padding: 12px; text-align: center; font-size: 0.95rem; }
-        .report-table th { background: #f8f9fa; color: #555; }
-        #upload-notice { position: fixed; top: 20px; left: 20px; background: var(--correct); color: white; padding: 10px 20px; border-radius: 8px; display: none; z-index: 1000; }
+        .report-table th, .report-table td { border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 0.95rem; }
+        .report-table th { background: #f8f9fa; color: #333; }
+        .icon-ok { color: var(--correct); font-weight: bold; }
+        .icon-no { color: var(--wrong); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="upload-notice">⏳ جاري مزامنة بياناتك مع السحابة...</div>
-
 <div class="quiz-card">
     <div class="header">
         <h3 style="margin:0; color:var(--secondary);">أ / عبدالعزيز الفيفي</h3>
-        <h2 style="margin:10px 0;">تقرير أداء الطالب الذكي</h2>
+        <h2 style="margin:10px 0;">نموذج (5) المطور - المراجعة الشاملة</h2>
     </div>
 
     <div id="start-screen" style="text-align: center;">
-        <input type="text" id="userNameInput" placeholder="اكتب اسمك الثلاثي..." style="width: 80%; padding: 20px; border-radius: 12px; border: 2px solid var(--secondary); text-align: center; font-size: 1.3rem; margin-bottom: 30px;">
-        <br><button class="btn-main" onclick="startQuiz()">ابدأ الاختبار 🚀</button>
+        <input type="text" id="userNameInput" placeholder="أدخل اسمك الثلاثي..." style="width: 80%; padding: 20px; border-radius: 12px; border: 2px solid var(--secondary); text-align: center; font-size: 1.2rem; margin-bottom: 25px; outline: none;">
+        <br><button class="btn-main" onclick="startQuiz()">ابدأ الاختبار الآن 🚀</button>
     </div>
 
     <div id="quiz-screen" class="hidden">
         <div class="status-bar">
-            <div>👤 الطالب: <span id="display-name" style="font-weight: bold;"></span></div>
-            <div id="display-q-idx"></div>
-            <div id="display-timer" style="font-weight: bold; color: var(--wrong);">45</div>
+            <div>👤 الطالب: <span id="display-name" style="color: var(--secondary); font-weight: bold;"></span></div>
+            <div id="display-q-idx" class="q-badge"></div>
+            <div id="display-timer" style="font-weight: bold;">45</div>
         </div>
-        <div id="display-question" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 25px; text-align: center;"></div>
+        <div id="display-question" style="font-size: 1.4rem; font-weight: bold; margin-bottom: 25px; text-align: center;"></div>
         <div id="display-options" class="options-grid"></div>
-        <div style="text-align: center;"><button id="next-btn" class="btn-main hidden" onclick="handleNext()">السؤال التالي ⮕</button></div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="next-btn" class="btn-main hidden" onclick="handleNext()">السؤال التالي ⮕</button>
+        </div>
     </div>
 
     <div id="result-screen" class="hidden">
-        <div style="text-align: center; background: var(--primary); color: var(--accent); padding: 30px; border-radius: 15px; margin-bottom: 25px;">
-            <h1 id="res-score" style="margin:0; font-size: 3.5rem;"></h1>
-            <p>تم إرسال نسخة من هذا التقرير للسحابة لتحليل بياناتك.</p>
+        <div style="text-align: center; background: var(--primary); color: var(--accent); padding: 40px; border-radius: 20px; margin-bottom: 30px;">
+            <h1 id="res-score" style="font-size: 4rem; margin:0;"></h1>
+            <p>تم إرسال تقرير أدائك للسحابة بنجاح.</p>
         </div>
         
+        <h3>📊 جدول مراجعة الإجابات:</h3>
         <table class="report-table">
             <thead>
                 <tr>
@@ -92,37 +96,36 @@
         appId: "1:597051893949:web:de5554ac900317a92b2fd4"
     };
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    var db = firebase.firestore();
 
-    [span_0](start_span)// الأسئلة [cite: 148-173]
+    [span_1](start_span)// عينة من الأسئلة من ملفك [cite: 148-155]
     const rawData = [
         { q: "ريش : طائر", opts: ["شعر : ثدييات", "جلد : إنسان", "وبر : إبل", "صوف : غنم"], ans: "شعر : ثدييات", cat: "تناظر" },
         { q: "ماء : حياة", opts: ["نوم : راحة", "أكل : شبع", "هواء : تنفس", "نار : حرق"], ans: "نوم : راحة", cat: "تناظر" },
         { q: "فصل : مدرسة", opts: ["غصن : شجرة", "غرفة : فندق", "لاعب : فريق", "كتاب : مكتبة"], ans: "غرفة : فندق", cat: "تناظر" }
-        // ... يمكن إضافة بقية الأسئلة هنا بنفس التنسيق
     ];
 
-    let currentQ = 0, scoreCount = 0, mixedData = [], sName = "", logsList = [], timerObj;
+    let currentQ = 0, scoreCount = 0, timerObj, mixedData = [], sName = "", logsList = [];
 
     function startQuiz() {
         sName = document.getElementById('userNameInput').value;
-        if(!sName.trim()) return alert("يرجى إدخال الاسم");
+        if(!sName.trim()) return alert("يرجى كتابة الاسم.");
         document.getElementById('display-name').innerText = sName;
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
-        mixedData = rawData.sort(() => Math.random() - 0.5);
+        mixedData = rawData.sort(() => Math.random() - 0.5); 
         loadQuestion();
     }
 
     function loadQuestion() {
         if(currentQ >= mixedData.length) return endQuiz();
         const item = mixedData[currentQ];
-        document.getElementById('display-q-idx').innerText = `سؤال ${currentQ + 1} / ${mixedData.length}`;
+        document.getElementById('display-q-idx').innerText = `السؤال ${currentQ + 1} / ${mixedData.length}`;
         document.getElementById('display-question').innerText = item.q;
+        document.getElementById('next-btn').classList.add('hidden');
+        
         const optBox = document.getElementById('display-options');
         optBox.innerHTML = '';
-        document.getElementById('next-btn').classList.add('hidden');
-
         [...item.opts].sort(() => Math.random() - 0.5).forEach(o => {
             const b = document.createElement('div');
             b.className = 'opt-btn';
@@ -130,7 +133,7 @@
             b.onclick = () => checkResult(o, b);
             optBox.appendChild(b);
         });
-        startTimer();
+        runTimer();
     }
 
     function checkResult(sel, el) {
@@ -139,21 +142,23 @@
         const isOk = (sel === item.ans);
         if(isOk) scoreCount++;
         
+        [cite_start]// تسجيل البيانات للملخص والسحابة[span_1](end_span)
         logsList.push({ q: item.q, userAns: sel, correctAns: item.ans, state: isOk, cat: item.cat });
 
-        document.querySelectorAll('.opt-btn').forEach(b => {
-            b.onclick = null;
-            if(b.innerText === item.ans) b.classList.add('correct');
-            else if(b.innerText === sel) b.classList.add('wrong');
+        document.querySelectorAll('.opt-btn').forEach(btn => {
+            btn.onclick = null;
+            if(btn.innerText === item.ans) btn.classList.add('correct');
+            else if(btn.innerText === sel) btn.classList.add('wrong');
         });
         document.getElementById('next-btn').classList.remove('hidden');
     }
 
-    function startTimer() {
+    function runTimer() {
         let t = 45;
-        document.getElementById('display-timer').innerText = t;
+        const d = document.getElementById('display-timer');
+        d.innerText = t;
         timerObj = setInterval(() => {
-            t--; document.getElementById('display-timer').innerText = t;
+            t--; d.innerText = t;
             if(t <= 0) { clearInterval(timerObj); checkResult("تخطى الوقت", null); }
         }, 1000);
     }
@@ -161,33 +166,28 @@
     function handleNext() { currentQ++; loadQuestion(); }
 
     function endQuiz() {
-        document.getElementById('upload-notice').style.display = 'block';
-        
-        // 1. الإقلاع للسحابة (إرسال البيانات للوحة التحكم)
+        [span_2](start_span)// إرسال البيانات للسحابة فوراً[span_2](end_span)
         db.collection("student_results").add({
             name: sName,
             score: scoreCount,
             total: mixedData.length,
-            details: logsList.map(l => ({ question: l.q, isCorrect: l.state, category: l.cat })),
+            details: logsList,
             time: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            document.getElementById('upload-notice').innerText = "✅ تمت المزامنة بنجاح";
-            setTimeout(() => document.getElementById('upload-notice').style.display='none', 3000);
         });
 
-        // 2. عرض الملخص النهائي للطالب (كما في الصورة)
+        // عرض شاشة النتائج والجدول (الملخص)
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('res-score').innerText = `النتيجة: ${scoreCount} من ${mixedData.length}`;
+        document.getElementById('res-score').innerText = `${scoreCount} / ${mixedData.length}`;
         
         const tbody = document.getElementById('report-body');
         logsList.forEach((log, i) => {
             const row = `<tr>
                 <td>${i+1}</td>
-                <td style="text-align:right">${log.q}</td>
+                <td>${log.q}</td>
                 <td>${log.userAns}</td>
                 <td style="color:var(--correct)">${log.correctAns}</td>
-                <td>${log.state ? '✔️' : '❌'}</td>
+                <td class="${log.state ? 'icon-ok' : 'icon-no'}">${log.state ? '✔️' : '❌'}</td>
             </tr>`;
             tbody.innerHTML += row;
         });
